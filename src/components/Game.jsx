@@ -1,6 +1,20 @@
 import { useState } from "react";
 import styled from "styled-components";
 
+const squareSide = "40px";
+
+const WinnerInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  gap: 10px;
+  width: calc((${squareSide} * 3) - 15px);
+`;
+
+const WinnerText = styled.p`
+  margin: 0;
+`;
+
 const GameContainer = styled.div`
   width: fit-content;
   border: 0.5px solid black;
@@ -11,15 +25,16 @@ const GameContainer = styled.div`
 
 const Row = styled.div`
   margin: 0;
-  height: 40px;
+  height: ${squareSide};
   width: fit-content;
   display: flex;
 `;
 
 const Square = styled.button`
-  width: 40px;
+  width: ${squareSide};
   height: 100%;
   border: 0.5px solid black;
+  font-size: 2rem;
   &:disabled:active {
     background-color: inherit;
   }
@@ -35,10 +50,13 @@ const Game = () => {
     [null, null, null],
   ];
 
-  const [gameHistory, setGameHistory] = useState([]);
+  const [gameHistory, setGameHistory] = useState([initialField]);
   const [winner, setWinner] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState("X");
-  const [gameField, setGameField] = useState(initialField);
+
+  const currentField = gameHistory
+    .at(gameHistory.length - 1)
+    .map((gameState) => [...gameState]);
 
   const calculateWinner = (arr) => {
     for (let i = 0; i < arr.length; i++) {
@@ -85,27 +103,26 @@ const Game = () => {
       return "Draw";
     }
   };
+
   const squareClickHandler = (rowIndex, colIndex) => {
     if (winner) return;
-    if (gameField[rowIndex][colIndex]) return;
+    if (currentField[rowIndex][colIndex]) return;
 
-    gameField[rowIndex][colIndex] = currentPlayer;
-    setGameField(gameField.map((row) => [...row]));
-    setGameHistory([...gameHistory, [...gameField]]);
-    console.log("gameField", gameField);
-    console.log(gameHistory, gameHistory);
-    if (calculateWinner(gameField)) {
-      setWinner(calculateWinner(gameField));
+    currentField[rowIndex][colIndex] = currentPlayer;
+    setGameHistory([...gameHistory, currentField]);
+    if (calculateWinner(currentField)) {
+      setWinner(calculateWinner(currentField));
       /*       console.log(gameHistory); */
       return;
     }
 
     currentPlayer === "X" ? setCurrentPlayer("O") : setCurrentPlayer("X");
   };
+
   const resetGame = () => {
     setWinner(null);
     setCurrentPlayer("X");
-    setGameField(initialField);
+    setGameHistory([initialField]);
   };
 
   /*   console.log("initialField", initialField);
@@ -113,7 +130,7 @@ const Game = () => {
   return (
     <>
       <GameContainer className="game">
-        {gameField.map((row, rowIndex) => (
+        {currentField.map((row, rowIndex) => (
           <Row key={`row: ${rowIndex}`}>
             {row.map((value, colIndex) => (
               <Square
@@ -129,10 +146,12 @@ const Game = () => {
         ))}
       </GameContainer>
       {Boolean(winner) && (
-        <div>
-          {winner === "Draw" ? "Draw!" : `Winner is ${winner}`}
+        <WinnerInfo>
+          <WinnerText>
+            {winner === "Draw" ? "Draw!" : `Winner is ${winner}`}
+          </WinnerText>
           <button onClick={resetGame}>Try again</button>
-        </div>
+        </WinnerInfo>
       )}
     </>
   );
