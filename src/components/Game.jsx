@@ -1,15 +1,14 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-const squareSide = "36px";
-const squareFontSize = `${(Number.parseInt(squareSide) / 40) * 2}rem`;
+import GameField from "./GameField";
 
 const WinnerInfo = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   gap: 10px;
-  width: calc((${squareSide} * 3) - 15px);
+  width: 500px;
 `;
 
 const WinnerText = styled.p`
@@ -24,38 +23,6 @@ const MoveInfo = styled.p`
 const Player = styled.span`
   font-weight: 600;
   color: crimson;
-`;
-
-const GameField = styled.div`
-  width: fit-content;
-  border: 0.5px solid black;
-  margin: 20px auto;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Row = styled.div`
-  margin: 0;
-  height: ${squareSide};
-  width: fit-content;
-  display: flex;
-`;
-
-const Square = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: ${squareSide};
-  height: 100%;
-  border: 0.5px solid black;
-  font-size: ${squareFontSize};
-  background-color: ${(props) => (props.$winner ? "red" : "inherit")};
-  &:disabled:active {
-    background-color: inherit;
-  }
-  &:active {
-    background-color: #b5b5b2;
-  }
 `;
 
 const Game = () => {
@@ -135,7 +102,6 @@ const Game = () => {
     setGameHistory([...gameHistory, currentField]);
     if (calculateWinner(currentField)) {
       setWinnerInfo(calculateWinner(currentField));
-      /*       console.log(gameHistory); */
       return;
     }
 
@@ -148,36 +114,22 @@ const Game = () => {
     setGameHistory([initialField]);
   };
 
-  console.log(winnerInfo);
+  //console.log(winnerInfo);
   return (
     <>
       <MoveInfo>
-        Player <Player>{currentPlayer}</Player> move
+        Player`s <Player>{currentPlayer}</Player> move
       </MoveInfo>
-      <GameField className="game">
-        {currentField.map((row, rowIndex) => (
-          <Row key={`row: ${rowIndex}`}>
-            {row.map((value, colIndex) => (
-              <Square
-                key={`${rowIndex}:${colIndex}`}
-                disabled={Boolean(winnerInfo)}
-                $winner={
-                  winnerInfo &&
-                  winnerInfo.winner !== "Draw" &&
-                  winnerInfo.winSquares.includes(`${rowIndex}:${colIndex}`)
-                    ? true
-                    : false
-                }
-                onClick={() => {
-                  squareClickHandler(rowIndex, colIndex);
-                }}
-              >
-                {value}
-              </Square>
-            ))}
-          </Row>
-        ))}
-      </GameField>
+      <GameField
+        currentField={currentField}
+        squareClickHandler={squareClickHandler}
+        indexToMark={
+          winnerInfo && winnerInfo.winner !== "Draw"
+            ? winnerInfo.winSquares
+            : null
+        }
+        disabled={Boolean(winnerInfo)}
+      />
       {Boolean(winnerInfo) && (
         <WinnerInfo>
           <WinnerText>
