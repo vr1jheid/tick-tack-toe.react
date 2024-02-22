@@ -1,7 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-const squareSide = "40px";
+const squareSide = "36px";
+const squareFontSize = `${(Number.parseInt(squareSide) / 40) * 2}rem`;
 
 const WinnerInfo = styled.div`
   display: flex;
@@ -15,7 +16,7 @@ const WinnerText = styled.p`
   margin: 0;
 `;
 
-const GameContainer = styled.div`
+const GameField = styled.div`
   width: fit-content;
   border: 0.5px solid black;
   margin: 20px auto;
@@ -31,10 +32,14 @@ const Row = styled.div`
 `;
 
 const Square = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: ${squareSide};
   height: 100%;
   border: 0.5px solid black;
-  font-size: 2rem;
+  font-size: ${squareFontSize};
+  background-color: ${(props) => (props.$winner ? "red" : "inherit")};
   &:disabled:active {
     background-color: inherit;
   }
@@ -51,7 +56,7 @@ const Game = () => {
   ];
 
   const [gameHistory, setGameHistory] = useState([initialField]);
-  const [winner, setWinner] = useState(null);
+  const [winnerInfo, setWinnerInfo] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState("X");
 
   const currentField = gameHistory
@@ -60,58 +65,66 @@ const Game = () => {
 
   const calculateWinner = (arr) => {
     for (let i = 0; i < arr.length; i++) {
+      // По горизонтали
       if (
         arr[i][0] !== null &&
         arr[i][0] === arr[i][1] &&
         arr[i][1] === arr[i][2]
       ) {
-        console.log("Case 1");
-        return arr[i][0];
+        return {
+          winner: arr[i][0],
+          winSquares: [`${i}:0`, `${i}:1`, `${i}:2`],
+        };
       }
-
+      // По вертикали
       if (
         arr[0][i] !== null &&
         arr[0][i] === arr[1][i] &&
         arr[1][i] === arr[2][i]
       ) {
-        console.log("Case 2");
-        return arr[0][i];
+        return {
+          winner: arr[0][i],
+          winSquares: [`0:${i}`, `1:${i}`, `2:${i}`],
+        };
       }
     }
 
+    // Основная диагональ
     if (
       arr[0][0] !== null &&
       arr[0][0] === arr[1][1] &&
       arr[1][1] === arr[2][2]
     ) {
-      return arr[0][0];
+      return { winner: arr[0][0], winSquares: ["0:0", "1:1", "2:2"] };
     }
 
+    // Побочная диагональ
     if (
       arr[0][2] !== null &&
       arr[0][2] === arr[1][1] &&
       arr[1][1] === arr[2][0]
     ) {
-      return arr[0][2];
+      return { winner: arr[0][2], winSquares: ["0:2", "1:1", "2:0"] };
     }
 
+    // Ничья
     if (
       !arr.some((row, rowIndex) =>
         row.some((_, colIndex) => arr[rowIndex][colIndex] === null)
       )
     ) {
-      return "Draw";
+      return { winner: "Draw", winSquares: null };
     }
   };
 
   const squareClickHandler = (rowIndex, colIndex) => {
-    if (winner) return;
+    if (winnerInfo) return;
     if (currentField[rowIndex][colIndex]) return;
 
     currentField[rowIndex][colIndex] = currentPlayer;
     setGameHistory([...gameHistory, currentField]);
     if (calculateWinner(currentField)) {
-      setWinner(calculateWinner(currentField));
+      setWinnerInfo(calculateWinner(currentField));
       /*       console.log(gameHistory); */
       return;
     }
@@ -120,35 +133,43 @@ const Game = () => {
   };
 
   const resetGame = () => {
-    setWinner(null);
+    setWinnerInfo(null);
     setCurrentPlayer("X");
     setGameHistory([initialField]);
   };
 
-  /*   console.log("initialField", initialField);
-  console.log("gameField", gameField); */
+  console.log(winnerInfo);
   return (
     <>
-      <GameContainer className="game">
+      <GameField className="game">
         {currentField.map((row, rowIndex) => (
           <Row key={`row: ${rowIndex}`}>
             {row.map((value, colIndex) => (
               <Square
+                key={`${rowIndex}:${colIndex}`}
+                $winner={
+                  winnerInfo &&
+                  winnerInfo.winner !== "Draw" &&
+                  winnerInfo.winSquares.includes(`${rowIndex}:${colIndex}`)
+                    ? true
+                    : false
+                }
                 onClick={() => {
                   squareClickHandler(rowIndex, colIndex);
                 }}
-                key={`${rowIndex}:${colIndex}`}
               >
                 {value}
               </Square>
             ))}
           </Row>
         ))}
-      </GameContainer>
-      {Boolean(winner) && (
+      </GameField>
+      {Boolean(winnerInfo) && (
         <WinnerInfo>
           <WinnerText>
-            {winner === "Draw" ? "Draw!" : `Winner is ${winner}`}
+            {winnerInfo.winner === "Draw"
+              ? "Draw!"
+              : `Winner: ${winnerInfo.winner}`}
           </WinnerText>
           <button onClick={resetGame}>Try again</button>
         </WinnerInfo>
