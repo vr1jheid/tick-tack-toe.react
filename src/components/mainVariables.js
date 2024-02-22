@@ -1,1 +1,1 @@
-export const squareSide = "36px";
+export const squareSideSize = "36px";

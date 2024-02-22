@@ -1,18 +1,18 @@
 import Square from "./Square";
 import styled from "styled-components";
-import { squareSide } from "./mainVariables";
+import { squareSideSize } from "./mainVariables";
 
 const GameFieldContainer = styled.div`
   width: fit-content;
   border: 0.5px solid black;
-  margin: 20px auto;
+  margin: 5px auto;
   display: flex;
   flex-direction: column;
 `;
 
 const Row = styled.div`
   margin: 0;
-  height: ${squareSide};
+  height: ${squareSideSize};
   width: fit-content;
   display: flex;
 `;
@@ -23,7 +23,7 @@ const GameField = ({
   squareClickHandler,
   disabled,
 }) => {
-  console.log(indexToMark);
+  /*   console.log(indexToMark); */
   return (
     <GameFieldContainer>
       {currentField.map((row, rowIndex) => (

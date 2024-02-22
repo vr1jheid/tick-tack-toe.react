@@ -1,17 +1,22 @@
 import styled from "styled-components";
-import { squareSide } from "./mainVariables";
+import { squareSideSize } from "./mainVariables";
 
-const squareFontSize = `${(Number.parseInt(squareSide) / 40) * 2}rem`;
+const squareFontSize = `${(Number.parseInt(squareSideSize) / 40) * 2}rem`;
 
 const SquareButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: ${squareSide};
+  width: ${squareSideSize};
   height: 100%;
   border: 0.5px solid black;
   font-size: ${squareFontSize};
   background-color: ${(props) => (props.$mark ? "red" : "inherit")};
+
+  &:disabled {
+    color: #575757;
+  }
+
   &:active:not(:disabled) {
     background-color: #b5b5b2;
   }

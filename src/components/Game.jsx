@@ -3,6 +3,19 @@ import styled from "styled-components";
 
 import GameField from "./GameField";
 
+const CachedMove = styled.div`
+  padding: 20px;
+`;
+const MovesHistory = styled.div`
+  padding-right: 30px;
+  margin-top: 25px;
+  position: absolute;
+  left: 50px;
+  top: 0px;
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+`;
+
 const WinnerInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -18,6 +31,7 @@ const WinnerText = styled.p`
 const MoveInfo = styled.p`
   font-size: 1.4rem;
   font-weight: 400;
+  margin-bottom: 40px;
 `;
 
 const Player = styled.span`
@@ -35,7 +49,7 @@ const Game = () => {
   const [gameHistory, setGameHistory] = useState([initialField]);
   const [winnerInfo, setWinnerInfo] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState("X");
-
+  console.log(gameHistory);
   const currentField = gameHistory
     .at(gameHistory.length - 1)
     .map((gameState) => [...gameState]);
@@ -114,35 +128,63 @@ const Game = () => {
     setGameHistory([initialField]);
   };
 
-  //console.log(winnerInfo);
   return (
     <>
-      <MoveInfo>
-        Player`s <Player>{currentPlayer}</Player> move
-      </MoveInfo>
-      <GameField
-        currentField={currentField}
-        squareClickHandler={squareClickHandler}
-        indexToMark={
-          winnerInfo && winnerInfo.winner !== "Draw"
-            ? winnerInfo.winSquares
-            : null
-        }
-        disabled={Boolean(winnerInfo)}
-      />
-      {Boolean(winnerInfo) && (
-        <WinnerInfo>
-          <WinnerText>
-            {winnerInfo.winner === "Draw" ? (
-              <Player>Draw!</Player>
-            ) : (
-              <>
-                Winner: <Player>{winnerInfo.winner}</Player>
-              </>
-            )}
-          </WinnerText>
-          <button onClick={resetGame}>Try again</button>
-        </WinnerInfo>
+      <div>
+        <MoveInfo>
+          Player`s <Player>{currentPlayer}</Player> move
+        </MoveInfo>
+        <GameField
+          currentField={currentField}
+          squareClickHandler={squareClickHandler}
+          indexToMark={
+            winnerInfo && winnerInfo.winner !== "Draw"
+              ? winnerInfo.winSquares
+              : null
+          }
+          disabled={Boolean(winnerInfo)}
+        />
+        <button onClick={resetGame}>Restart</button>
+        {Boolean(winnerInfo) && (
+          <WinnerInfo>
+            <WinnerText>
+              {winnerInfo.winner === "Draw" ? (
+                <Player>Draw!</Player>
+              ) : (
+                <>
+                  Winner: <Player>{winnerInfo.winner}</Player>
+                </>
+              )}
+            </WinnerText>
+          </WinnerInfo>
+        )}
+      </div>
+
+      {gameHistory.length > 2 && (
+        <MovesHistory>
+          <header>Game moves history</header>
+          <button></button>
+          {gameHistory
+            .map((gameState, i) => {
+              if (i === gameHistory.length - 1 || i === 0) return;
+              return (
+                <CachedMove key={`move #${i}`}>
+                  <span>Move #{i}</span>
+                  <GameField currentField={gameState} disabled={true} />
+                  <button
+                    onClick={() => {
+                      setGameHistory(gameHistory.slice(0, ++i));
+                      setWinnerInfo(null);
+                      setCurrentPlayer(i % 2 === 0 ? "O" : "X");
+                    }}
+                  >
+                    To this move
+                  </button>
+                </CachedMove>
+              );
+            })
+            .reverse()}
+        </MovesHistory>
       )}
     </>
   );
