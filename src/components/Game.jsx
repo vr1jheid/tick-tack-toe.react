@@ -16,6 +16,16 @@ const WinnerText = styled.p`
   margin: 0;
 `;
 
+const MoveInfo = styled.p`
+  font-size: 1.4rem;
+  font-weight: 400;
+`;
+
+const Player = styled.span`
+  font-weight: 600;
+  color: crimson;
+`;
+
 const GameField = styled.div`
   width: fit-content;
   border: 0.5px solid black;
@@ -141,12 +151,16 @@ const Game = () => {
   console.log(winnerInfo);
   return (
     <>
+      <MoveInfo>
+        Player <Player>{currentPlayer}</Player> move
+      </MoveInfo>
       <GameField className="game">
         {currentField.map((row, rowIndex) => (
           <Row key={`row: ${rowIndex}`}>
             {row.map((value, colIndex) => (
               <Square
                 key={`${rowIndex}:${colIndex}`}
+                disabled={Boolean(winnerInfo)}
                 $winner={
                   winnerInfo &&
                   winnerInfo.winner !== "Draw" &&
@@ -167,9 +181,13 @@ const Game = () => {
       {Boolean(winnerInfo) && (
         <WinnerInfo>
           <WinnerText>
-            {winnerInfo.winner === "Draw"
-              ? "Draw!"
-              : `Winner: ${winnerInfo.winner}`}
+            {winnerInfo.winner === "Draw" ? (
+              <Player>Draw!</Player>
+            ) : (
+              <>
+                Winner: <Player>{winnerInfo.winner}</Player>
+              </>
+            )}
           </WinnerText>
           <button onClick={resetGame}>Try again</button>
         </WinnerInfo>
