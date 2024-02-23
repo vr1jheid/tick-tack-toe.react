@@ -32,6 +32,11 @@ const MovesHistory = styled.div`
   top: 0px;
   max-height: calc(100vh - 70px);
   overflow-y: auto;
+
+  @media (max-width: 768px) {
+    position: static;
+    max-height: none;
+  }
 `;
 
 const MoveInfo = styled.p`
