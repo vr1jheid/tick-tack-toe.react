@@ -36,6 +36,7 @@ const MovesHistory = styled.div`
   @media (max-width: 768px) {
     position: static;
     max-height: none;
+    padding: 0;
   }
 `;
 
