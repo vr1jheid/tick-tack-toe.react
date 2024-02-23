@@ -15,10 +15,7 @@ const SortButton = styled.button`
   padding: 5px;
   border-radius: 4px;
   &:hover {
-    background-color: #f9f175;
-  }
-  &:active {
-    color: #1e627d;
+    color: #398aaa;
   }
 `;
 
