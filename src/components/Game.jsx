@@ -24,6 +24,7 @@ const CachedMove = styled.div`
 `;
 
 const MovesHistory = styled.div`
+  font-size: 3rem;
   padding-right: 30px;
   margin-top: 25px;
   position: absolute;
@@ -33,20 +34,8 @@ const MovesHistory = styled.div`
   overflow-y: auto;
 `;
 
-const WinnerInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  gap: 10px;
-  width: 500px;
-`;
-
-const WinnerText = styled.p`
-  margin: 0;
-`;
-
 const MoveInfo = styled.p`
-  font-size: 1.4rem;
+  font-size: 3rem;
   font-weight: 400;
   margin-bottom: 40px;
 `;

@@ -6,6 +6,7 @@ const GameFieldContainer = styled.div`
   width: fit-content;
   border: 0.5px solid black;
   margin: 5px auto;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 `;
