@@ -179,7 +179,19 @@ const Game = () => {
     <>
       <div>
         <MoveInfo>
-          Player`s <Player>{currentPlayer}</Player> move
+          {winnerInfo ? (
+            winnerInfo.winner === "Draw" ? (
+              <Player>Draw!</Player>
+            ) : (
+              <>
+                Winner: <Player>{winnerInfo.winner}</Player>
+              </>
+            )
+          ) : (
+            <>
+              Player`s <Player>{currentPlayer}</Player> move
+            </>
+          )}
         </MoveInfo>
         <GameField
           currentField={currentField}
@@ -192,19 +204,6 @@ const Game = () => {
           disabled={Boolean(winnerInfo)}
         />
         <button onClick={resetGame}>Restart</button>
-        {Boolean(winnerInfo) && (
-          <WinnerInfo>
-            <WinnerText>
-              {winnerInfo.winner === "Draw" ? (
-                <Player>Draw!</Player>
-              ) : (
-                <>
-                  Winner: <Player>{winnerInfo.winner}</Player>
-                </>
-              )}
-            </WinnerText>
-          </WinnerInfo>
-        )}
       </div>
 
       {gameHistory.length > 2 && (
