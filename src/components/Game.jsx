@@ -1,11 +1,31 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { FcNumericalSorting12, FcNumericalSorting21 } from "react-icons/fc";
 
 import GameField from "./GameField";
+
+const SortButton = styled.button`
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  background-color: inherit;
+  margin-top: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  &:hover {
+    background-color: #f9f175;
+  }
+  &:active {
+    color: #1e627d;
+  }
+`;
 
 const CachedMove = styled.div`
   padding: 20px;
 `;
+
 const MovesHistory = styled.div`
   padding-right: 30px;
   margin-top: 25px;
@@ -45,7 +65,7 @@ const Game = () => {
     [null, null, null],
     [null, null, null],
   ];
-
+  const [sortingDirection, setSortingDirection] = useState("desc");
   const [gameHistory, setGameHistory] = useState([initialField]);
   const [winnerInfo, setWinnerInfo] = useState(null);
   const [currentPlayer, setCurrentPlayer] = useState("X");
@@ -128,6 +148,33 @@ const Game = () => {
     setGameHistory([initialField]);
   };
 
+  const getMovesHistory = () => {
+    return gameHistory.map((gameState, i) => {
+      if (i === gameHistory.length - 1 || i === 0) return;
+      return (
+        <CachedMove key={`move #${i}`}>
+          <span>Move #{i}</span>
+          <GameField currentField={gameState} disabled={true} />
+          <button
+            onClick={() => {
+              setGameHistory(gameHistory.slice(0, ++i));
+              setWinnerInfo(null);
+              setCurrentPlayer(i % 2 === 0 ? "O" : "X");
+            }}
+          >
+            To this move
+          </button>
+        </CachedMove>
+      );
+    });
+  };
+
+  const switchSortingDirection = () => {
+    sortingDirection === "desc"
+      ? setSortingDirection("asc")
+      : setSortingDirection("desc");
+  };
+
   return (
     <>
       <div>
@@ -162,28 +209,21 @@ const Game = () => {
 
       {gameHistory.length > 2 && (
         <MovesHistory>
-          <header>Game moves history</header>
-          <button></button>
-          {gameHistory
-            .map((gameState, i) => {
-              if (i === gameHistory.length - 1 || i === 0) return;
-              return (
-                <CachedMove key={`move #${i}`}>
-                  <span>Move #{i}</span>
-                  <GameField currentField={gameState} disabled={true} />
-                  <button
-                    onClick={() => {
-                      setGameHistory(gameHistory.slice(0, ++i));
-                      setWinnerInfo(null);
-                      setCurrentPlayer(i % 2 === 0 ? "O" : "X");
-                    }}
-                  >
-                    To this move
-                  </button>
-                </CachedMove>
-              );
-            })
-            .reverse()}
+          <header>Game moves history:</header>
+          <SortButton onClick={switchSortingDirection}>
+            {sortingDirection === "desc" ? (
+              <>
+                По убыванию <FcNumericalSorting21 />
+              </>
+            ) : (
+              <>
+                По возрастанию <FcNumericalSorting12 />
+              </>
+            )}
+          </SortButton>
+          {sortingDirection === "desc"
+            ? getMovesHistory().reverse()
+            : getMovesHistory()}
         </MovesHistory>
       )}
     </>
